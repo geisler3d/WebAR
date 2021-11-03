@@ -3,19 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>WEB Test</title>
+    <title>Unity WebGL Player | WEB AR TEST </title>
   </head>
   <body style="text-align: center">
     <canvas id="unity-canvas" width=1280 height=720 style="width: 1280px; height: 720px; background: #231F20"></canvas>
-    <script src="Build/RWE webbuild.loader.js"></script>
+    <script src="Build/RWE webbuild touch.loader.js"></script>
     <script>
       createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/RWE webbuild.data",
-        frameworkUrl: "Build/RWE webbuild.framework.js",
-        codeUrl: "Build/RWE webbuild.wasm",
+        dataUrl: "Build/RWE webbuild touch.data",
+        frameworkUrl: "Build/RWE webbuild touch.framework.js",
+        codeUrl: "Build/RWE webbuild touch.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "EXCIT3D",
-        productName: "WEB APP test",
+        productName: "WEB AR TEST ",
         productVersion: "1.0",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
