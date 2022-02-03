@@ -26,6 +26,7 @@ a {
 .webgl-wrapper {
     display: inline-block;
     width: 100%;
+    height: 95vh;
     /*  max-width: 1280px;  remove this line for full width */
     position: relative;
 }

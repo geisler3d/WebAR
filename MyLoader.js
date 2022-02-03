@@ -244,6 +244,9 @@ function createUnityInstance(canvas, config, onProgress) {
     alert(message);
     errorHandler.didShowErrorMessage = true;
   }
+      
+
+  
 
 
   Module.abortHandler = function (message) {
