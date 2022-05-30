@@ -64,17 +64,60 @@
     </a>
   </div>
   <div id="IphoneSE">
-    <a rel="ar" href="RWESmall1SaT.usdz">
-      <img src="RWEPreview2.jpg" class="responsive">
-      <a href="https://experiencing-renewables.com/AR/" class="myButton">Back</a>
-    </a>
+      <a rel="ar" href="RWESmall1SaT.usdz">
+          <img src="RWEPreview2.jpg" class="responsive">
+          <a href="https://experiencing-renewables.com/AR/" class="myButton">Back</a>
+      </a>
+    <div id="max"></div>  
   </div>
 
   <script>
     var iHeight = window.screen.height;
-  var iWidth = window.screen.width;
+    var iWidth = window.screen.width;
 
-  if (iWidth === 390 && iHeight === 844) {
+  if (iWidth === 1024 && iHeight === 1366) {
+    // Ipad Pro Big 
+    NewIPhones.style.display = "block";
+    OldIPhones.style.display = "none";
+    IphoneSE.style.display = "none";
+  }
+  else if (iWidth === 834 && iHeight === 1194) {
+    // Ipad Pro Small
+    NewIPhones.style.display = "block";
+    OldIPhones.style.display = "none";
+    IphoneSE.style.display = "none";
+  }
+  else if (iWidth === 820 && iHeight === 1180) {
+    // Ipad Air Gen4 
+    NewIPhones.style.display = "none";
+    OldIPhones.style.display = "none";
+    IphoneSE.style.display = "block";
+  }
+  else if (iWidth === 834 && iHeight === 1112) {
+     // Ipad Air Gen3 
+     NewIPhones.style.display = "none";
+     OldIPhones.style.display = "block";
+     IphoneSE.style.display = "none";
+  }
+  else if (iWidth === 744 && iHeight === 1133) {
+    // Ipad mini Gen6
+    NewIPhones.style.display = "none";
+    OldIPhones.style.display = "none";
+    IphoneSE.style.display = "block";
+  }
+  else if (iWidth === 810 && iHeight === 1080) {
+    // Ipad/ 7 / 8 / 9 Pro 
+    NewIPhones.style.display = "none";
+    OldIPhones.style.display = "none";
+    IphoneSE.style.display = "block";
+  }
+  else if (iWidth === 768 && iHeight === 1024) {
+      // Ipad/ 7 / 8 / 9 Pro 
+      NewIPhones.style.display = "none";
+      OldIPhones.style.display = "block";
+      IphoneSE.style.display = "none";
+  }
+  else if (iWidth === 390 && iHeight === 844) {
     // Iphone 13/ 13pro / 12 / 12 Pro 
     NewIPhones.style.display = "block";
     OldIPhones.style.display = "none";
@@ -93,16 +136,187 @@
     IphoneSE.style.display = "none";
   }
   else if (iWidth === 414 && iHeight === 896) {
-    // Iphone 11 ProMax / 11/ XR / Xs Max / 11pro 
-    NewIPhones.style.display = "block";
-    OldIPhones.style.display = "block";
-    IphoneSE.style.display = "none";
+      // create worker concurrency estimation code as blob
+      var blobUrl = URL.createObjectURL(new Blob(['(',
+          function () {
+              self.addEventListener('message', function (e) {
+                  // run worker for 4 ms
+                  var st = Date.now();
+                  var et = st + 4;
+                  while (Date.now() < et);
+                  self.postMessage({ st: st, et: et });
+              });
+          }.toString(),
+          ')()'], { type: 'application/javascript' }));
+
+
+      // take 10 samples using 16 workers
+      sample([], 10, 16, function (err, cores) {
+          document.getElementById('max').innerHTML = 'Max concurrency: ~' + cores + ' cores';
+          if (cores <= 9) {
+              // IphoneX
+            NewIPhones.style.display = "none";
+            OldIPhones.style.display = "none";
+            IphoneSE.style.display = "block";
+          }
+          else if (cores >= 10) {
+              // Iphone 11 ProMax / 11 / XS Max / 11pro 
+            NewIPhones.style.display = "block";
+            OldIPhones.style.display = "none";
+            IphoneSE.style.display = "none";
+          }
+      });
+
+      function sample(max, samples, numWorkers, callback) {
+          if (samples === 0) {
+              // get overlap average
+              var avg = Math.floor(max.reduce(function (avg, x) {
+                  return avg + x;
+              }, 0) / max.length);
+              avg = Math.max(1, avg);
+              return callback(null, avg);
+          }
+          map(numWorkers, function (err, results) {
+              max.push(reduce(numWorkers, results));
+              sample(max, samples - 1, numWorkers, callback);
+          });
+      }
+
+      function map(numWorkers, callback) {
+          var workers = [];
+          var results = [];
+          for (var i = 0; i < numWorkers; ++i) {
+              var worker = new Worker(blobUrl);
+              worker.addEventListener('message', function (e) {
+                  results.push(e.data);
+                  if (results.length === numWorkers) {
+                      for (var i = 0; i < numWorkers; ++i) {
+                          workers[i].terminate();
+                      }
+                      callback(null, results);
+                  }
+              });
+              workers.push(worker);
+          }
+          for (var i = 0; i < numWorkers; ++i) {
+              workers[i].postMessage(i);
+          }
+      }
+
+      function reduce(numWorkers, results) {
+          // find overlapping time windows
+          var overlaps = [];
+          for (var n = 0; n < numWorkers; ++n) {
+              var r1 = results[n];
+              var overlap = overlaps[n] = [];
+              for (var i = 0; i < numWorkers; ++i) {
+                  if (n === i) {
+                      continue;
+                  }
+                  var r2 = results[i];
+                  if ((r1.st > r2.st && r1.st < r2.et) ||
+                      (r2.st > r1.st && r2.st < r1.et)) {
+                      overlap.push(i);
+                  }
+              }
+          }
+          
+          return overlaps.reduce(function (max, overlap) {
+              return Math.max(max, overlap.length);
+          }, 0);
+      }   
+
   }
   else if (iWidth === 375 && iHeight === 667) {
-    // Iphone SE Gen2 
-    NewIPhones.style.display = "none";
-    OldIPhones.style.display = "none";
-    IphoneSE.style.display = "block";
+      // create worker concurrency estimation code as blob
+      var blobUrl = URL.createObjectURL(new Blob(['(',
+          function () {
+              self.addEventListener('message', function (e) {
+                  // run worker for 4 ms
+                  var st = Date.now();
+                  var et = st + 4;
+                  while (Date.now() < et);
+                  self.postMessage({ st: st, et: et });
+              });
+          }.toString(),
+          ')()'], { type: 'application/javascript' }));
+
+
+      // take 10 samples using 16 workers
+      sample([], 10, 16, function (err, cores) {
+          document.getElementById('max').innerHTML = 'Max concurrency: ~' + cores + ' cores';
+          if (cores <= 5){
+              // Iphone 6S
+              NewIPhones.style.display = "none";
+              OldIPhones.style.display = "block";
+              IphoneSE.style.display = "none";
+          }
+          else if (cores >= 6){
+              // Iphone SE Gen2 
+              NewIPhones.style.display = "none";
+              OldIPhones.style.display = "none";
+              IphoneSE.style.display = "block";
+          }
+      });
+
+      function sample(max, samples, numWorkers, callback) {
+          if (samples === 0) {
+              // get overlap average
+              var avg = Math.floor(max.reduce(function (avg, x) {
+                  return avg + x;
+              }, 0) / max.length);
+              avg = Math.max(1, avg);
+              return callback(null, avg);
+          }
+          map(numWorkers, function (err, results) {
+              max.push(reduce(numWorkers, results));
+              sample(max, samples - 1, numWorkers, callback);
+          });
+      }
+
+      function map(numWorkers, callback) {
+          var workers = [];
+          var results = [];
+          for (var i = 0; i < numWorkers; ++i) {
+              var worker = new Worker(blobUrl);
+              worker.addEventListener('message', function (e) {
+                  results.push(e.data);
+                  if (results.length === numWorkers) {
+                      for (var i = 0; i < numWorkers; ++i) {
+                          workers[i].terminate();
+                      }
+                      callback(null, results);
+                  }
+              });
+              workers.push(worker);
+          }
+          for (var i = 0; i < numWorkers; ++i) {
+              workers[i].postMessage(i);
+          }
+      }
+
+      function reduce(numWorkers, results) {
+          // find overlapping time windows
+          var overlaps = [];
+          for (var n = 0; n < numWorkers; ++n) {
+              var r1 = results[n];
+              var overlap = overlaps[n] = [];
+              for (var i = 0; i < numWorkers; ++i) {
+                  if (n === i) {
+                      continue;
+                  }
+                  var r2 = results[i];
+                  if ((r1.st > r2.st && r1.st < r2.et) ||
+                      (r2.st > r1.st && r2.st < r1.et)) {
+                      overlap.push(i);
+                  }
+              }
+          }      
+
+          return overlaps.reduce(function (max, overlap) {
+              return Math.max(max, overlap.length);
+          }, 0);
+      }   
   }
   else if (iWidth === 320 && iHeight === 480) {
     NewIPhones.style.display = "none";
